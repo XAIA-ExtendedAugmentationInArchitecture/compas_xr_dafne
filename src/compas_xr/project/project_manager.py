@@ -132,6 +132,8 @@ class ProjectManager(object):
 
         """
         data = self.create_project_data_from_compas(assembly, building_plan, qr_frames_list)
+        #print(data)
+        print(self.database._ensure_database())
         self.database.upload_data(data, project_name)
 
     def upload_qr_frames_to_project(self, project_name, qr_frames_list):
