@@ -34,6 +34,7 @@ class ProjectManager(object):
         self.storage = Storage(config_path)
         self.database = RealtimeDatabase(config_path)
 
+
     def application_settings_writer(self, project_name, storage_folder="None", z_to_y_remap=False):
         """
         Uploads required application settings to the Firebase RealtimeDatabase.
@@ -86,7 +87,7 @@ class ProjectManager(object):
             data = {
                 "QRFrames": qr_assembly.__data__,
                 "assembly": assembly.__data__,
-                "parts": {part.key: part for part in assembly.parts()},
+                # "parts": {part.key: part for part in assembly.parts()},
                 "building_plan": building_plan,
             }
         return data
