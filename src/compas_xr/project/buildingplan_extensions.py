@@ -40,9 +40,9 @@ class BuildingPlanExtensions(object):
         for step in building_plan.steps:
             step.geometry = data_type_list[data_type]
             # TODO: These are unused for now, but are expeted on the application side
-            step.instructions = ["none"]
-            step.elements_held = [0]
-
+            # step.instructions = ["none"]
+            # step.elements_held = [0]
+            
             element_key = str(step.element_ids[0])
             if robot_keys:
                 if element_key in robot_keys:
@@ -57,7 +57,52 @@ class BuildingPlanExtensions(object):
                         break
 
         return building_plan
+    
+    def create_buildingplan_from_assembly_with_categories(self, assembly, data_type, robot_keys, priority_keys_lists):
+        """
+        Create a compas_timber.planning.BuildingPlan based on the sequence of the assembly parts.
 
+        Parameters
+        ----------
+        assembly : :class:`~compas_timber.assembly.TimberAssembly` or :class:`~compas.datastructures.Assembly`
+            The assembly that you want to generate the buiding plan for.
+        data_type : int
+            List index of which data type will be loaded on the application side [0: 'Cylinder', 1: 'Box', 2: 'ObjFile']
+        robot_keys : list of str
+            List of keys that are intended to be built by the robot.
+        priority_keys_lists : list of list of str
+            List in assembly order of lists of assembly keys that can be built in parallel.
+
+        Returns
+        -------
+        building_plan : :class:`~compas_timber.planning.BuildingPlan`
+            The building plan generated from the assembly sequence.
+
+        """
+        data_type_list = ["0.Cylinder", "1.Box", "2.ObjFile"]
+        building_plan = SimpleSequenceGenerator(assembly=assembly).result
+
+        for step in building_plan.steps:
+            step.geometry = data_type_list[data_type]
+            # TODO: These are unused for now, but are expeted on the application side
+            # step.instructions = ["none"]
+            # step.elements_held = [0]
+            
+            element_key = str(step.element_ids[0])
+            if robot_keys:
+                if element_key in robot_keys:
+                    step.actor = "ROBOT"
+
+            if not priority_keys_lists:
+                step.priority = 0
+            else:
+                for i, keys_list in enumerate(priority_keys_lists):
+                    if element_key in keys_list:
+                        step.priority = i
+                        break
+
+        return building_plan
+    
     def create_buildingplan_from_with_custom_sequence(self, assembly, sequenced_keys, data_type, robot_keys, priority_keys_lists):
         """
         Create a compas_timber.planning.BuildingPlan based on the sequence of the assembly parts.
